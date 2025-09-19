@@ -27,21 +27,6 @@ const CONFIG = {
   },
 } as const;
 
-// 类型定义
-interface RecommendationParams {
-  page: number;
-  limit: number;
-  userId?: string;
-  contentType: "record" | "article"; // 新增内容类型参数
-}
-
-interface RecommendationItem extends Omit<IRecord, "_id"> {
-  id: string;
-  score: number;
-  isLiked?: boolean;
-  isBookmarked?: boolean;
-}
-
 /**
  * 计算内容与用户兴趣的相似度分数
  * @param record - 待评分的记录
