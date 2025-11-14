@@ -34,6 +34,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "primereact/skeleton";
 import { Sidebar } from "primereact/sidebar";
 import { useSwipeable } from "react-swipeable";
+import WeeklyStats from "@/components/WeeklyStats";
 
 const steps: DriveStep[] = [
   {
@@ -712,6 +713,9 @@ export default function Home() {
           />
         </div>
       )}
+      
+      {/* Weekly statistics */}
+      <WeeklyStats className="mb-4" />
       
       <ChatHeader
         onNewChat={createNewChat}
