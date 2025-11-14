@@ -74,6 +74,17 @@ const steps: DriveStep[] = [
   },
 ];
 
+// 检测是否为首次访问，为访客用户也启用引导
+const checkFirstVisit = () => {
+  if (typeof window !== 'undefined') {
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (!hasVisited) {
+      localStorage.setItem('showTour', 'true');
+      localStorage.setItem('hasVisited', 'true');
+    }
+  }
+};
+
 // 添加一个工具函数来计算实际对话数量
 const getActualMessageCount = (messages: Message[] = []) => {
   return messages.filter((msg) => msg.role !== "system").length;
@@ -286,6 +297,13 @@ export default function Home() {
       scrollToBottom(chatEndRef.current);
     }
   }, [markdownRendered, isInitialScrollRef, scrollToBottom]);
+
+  /**
+   * 检测首次访问，为所有用户（包括访客）启用引导
+   */
+  useEffect(() => {
+    checkFirstVisit();
+  }, []);
 
   UseTour(steps, isAuthenticated ? "authenticated" : "unauthenticated"); // 添加用户引导
 
