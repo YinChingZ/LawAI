@@ -1,6 +1,7 @@
 // AI 服务的请求和调取会话逻辑 (支持已登录用户和临时用户)
 import { NextResponse, NextRequest } from "next/server";
 import Chat from "@/models/chat";
+import QueryLog from "@/models/queryLog";
 import DBconnect from "@/lib/mongodb";
 import User from "@/models/user";
 import { ZhipuAI } from "zhipuai-sdk-nodejs-v4";
@@ -161,6 +162,24 @@ export async function POST(req: NextRequest) {
         chat = existingChat;
       }
     }
+    // 记录查询日志 (用于统计)
+    try {
+      // 确保数据库连接 (Guest模式下可能还没连接)
+      if (isGuestMode) {
+        await DBconnect();
+      }
+      
+      await QueryLog.create({
+        userId: isGuestMode ? identity.guestId : identity.identifier,
+        isGuest: isGuestMode,
+        timestamp: new Date()
+      });
+      console.log("📊 Query logged for stats");
+    } catch (logError) {
+      console.error("Failed to log query:", logError);
+      // 不中断主流程
+    }
+
     // 创建流式响应
     console.log("🤖 Starting AI request...");
     const stream = new ReadableStream({
