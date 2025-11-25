@@ -7,24 +7,31 @@ export async function GET() {
   try {
     await DBconnect();
 
-    // Calculate the date 7 days ago
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    // Calculate the start of the current week (Monday)
+    const now = new Date();
+    const day = now.getDay(); // 0 (Sun) to 6 (Sat)
+    // Calculate difference to get to Monday
+    // If Sunday (0), subtract 6 days. If Monday (1), subtract 0 days. etc.
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+    
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(diff);
+    startOfWeek.setHours(0, 0, 0, 0);
 
-    // Get all chats with messages from the past 7 days
+    // Get all chats with messages from the current week
     const chats = await ChatModel.find({
-      "messages.timestamp": { $gte: sevenDaysAgo },
+      "messages.timestamp": { $gte: startOfWeek },
     }).select("messages");
 
-    // Count user messages from the past week
+    // Count user messages from the current week
     let queryCount = 0;
     chats.forEach((chat) => {
       chat.messages.forEach((message) => {
-        // Count only user messages (not system or assistant) from the past week
+        // Count only user messages (not system or assistant) from the current week
         if (
           message.role === "user" &&
           message.timestamp &&
-          new Date(message.timestamp) >= sevenDaysAgo
+          new Date(message.timestamp) >= startOfWeek
         ) {
           queryCount++;
         }

@@ -52,7 +52,7 @@ export default function WeeklyStats({ className = "" }: WeeklyStatsProps) {
       <div className="flex items-center gap-2">
         <i className="pi pi-chart-line text-blue-600 text-lg"></i>
         <p className="text-sm text-gray-700 m-0">
-          <span className="font-medium">上周，法律AI 已帮助解答了 </span>
+          <span className="font-medium">本周，法律AI 已帮助解答了 </span>
           <span className="font-bold text-blue-600 text-base">{queryCount}</span>
           <span className="font-medium"> 个用户查询</span>
         </p>
